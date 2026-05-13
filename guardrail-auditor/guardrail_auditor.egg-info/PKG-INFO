@@ -1,0 +1,71 @@
+Metadata-Version: 2.4
+Name: guardrail-auditor
+Version: 0.1.0
+Summary: IaC guardrail scanning and risk scoring
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn[standard]>=0.32.0
+Requires-Dist: sqlalchemy>=2.0.36
+Requires-Dist: pydantic>=2.10.0
+Requires-Dist: python-hcl2>=5.0.0
+Requires-Dist: PyYAML>=6.0.2
+Requires-Dist: streamlit>=1.40.0
+Provides-Extra: dev
+Requires-Dist: httpx>=0.27.0; extra == "dev"
+Requires-Dist: pytest>=8.3.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.24.0; extra == "dev"
+
+# guardrail-auditor
+
+Enterprise-style **IaC guardrail auditor**: scan Terraform and CloudFormation against security baselines, persist results in a database, expose an **API-first** workflow, and review a **visual risk score** in Streamlit.
+
+## Features
+
+- **FastAPI** — `POST /scans` ingests raw IaC, parses it, runs registered rules, stores **findings** and a **0–100 risk score** (SQLite by default).
+- **Rules** — AWS (S3 public exposure, wide-open security groups on sensitive ports, IAM `Action *` + `Resource *`) and Azure (HTTPS-only on storage accounts, internet-facing NSG rules for SSH/RDP).
+- **Streamlit dashboard** — charts and tables over `GET /scans` and `GET /scans/{id}` (set `GUARDRAIL_API_URL` if the API is not on `http://127.0.0.1:8000`).
+
+## Layout
+
+- `app/` — API, database, parsers, rules, scoring, routes
+- `dashboard/` — Streamlit UI
+- `fixtures/` — sample IaC for local testing
+- `tests/` — pytest suite
+
+## Quick start
+
+```bash
+cd guardrail-auditor
+pip install -e ".[dev]"
+uvicorn app.main:app --reload
+```
+
+Create a scan with a JSON body: `source_name`, `source_kind` (`terraform` or `cloudformation`), and `content` (full file text). Example with PowerShell:
+
+```powershell
+$body = @{
+  source_name = "demo"
+  source_kind = "terraform"
+  content     = (Get-Content -Raw fixtures/insecure_aws.tf)
+} | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/scans -Body $body -ContentType "application/json"
+```
+
+Streamlit (after the API is up):
+
+```bash
+streamlit run dashboard/app.py
+```
+
+## Database
+
+Default: **SQLite** at `./guardrail.db`. For PostgreSQL (or another SQLAlchemy URL), set:
+
+`DATABASE_URL=postgresql+psycopg://user:pass@host:5432/dbname`
+
+## Tests
+
+```bash
+python -m pytest tests -q
+```

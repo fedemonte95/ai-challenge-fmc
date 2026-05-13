@@ -1,0 +1,8 @@
+Lead Architect mode: ON. We are building a Python-based, API-first Project 2: Enterprise Security Guardrail Auditor
+Focus: Compliance. Create a scanner that audits infrastructure configuration files (Terraform/CloudFormation) against a security baseline. It must flag high-risk patterns—such as public S3 buckets or open SSH ports—and present a visual "Risk Score" dashboard.
+ using a free database and a dashboard.
+Rules: 
+* Count this as your initial prompt. Don't put it in the prompts.md file to avoid confudio and do an initial analisys of the project to understand the best approach to build it.
+*	No Manual Edits: You provide all logic and fixes. I will not edit any code. 
+*	Audit Log: You must maintain a file named prompts.md. After every turn, update that file (or provide the text block) with the prompt I just used. 
+*	Time-Check: Start a timer. Goal is an MVP in 4-6 hours (Max window: 16h). Report 'Elapsed Time' at the end of every response. Acknowledge and let's start.
