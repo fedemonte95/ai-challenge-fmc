@@ -14,6 +14,7 @@ Enterprise-style **IaC guardrail auditor**: scan Terraform and CloudFormation ag
 - `dashboard/` — Streamlit UI
 - `fixtures/` — sample IaC for local testing
 - `tests/` — pytest suite
+- `STAKEHOLDER_OVERVIEW.md` — execution flow, responsibilities, and glossary for business + engineering audiences
 
 ## Quick start
 
